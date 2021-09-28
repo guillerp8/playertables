@@ -17,6 +17,10 @@ This project does not contain a license, therefore you are not allowed to add on
 3) Add `ensure playertables` in your server.cfg
 4) Start your server.
 
+## Why you must use this?
+
+Instead of getting all the players with ESX.GetPlayers() or ESX.GetExtendedPlayers() and loop getting the player job, just get all the players with an specified job.
+
 ## Documentation
 
 - How to implement the resource
