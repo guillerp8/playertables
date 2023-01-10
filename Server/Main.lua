@@ -1,5 +1,6 @@
 _Players = {}
 ESX = ESX 
+Jobs = {}
 
 if C['UseOldESX'] then
     TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end) 
@@ -12,13 +13,14 @@ DebugLog = function(txt)
 end
 
 CreateThread(function()
-    for k, v in pairs(C['Jobs']) do
-        _Players[v] = {}
-        if C['enableDebug'] then
-            DebugLog("Registered job: " ..v)
-        end
-    end
-end)
+    Citizen.Wait(1000)
+     for k, v in pairs(Jobs) do
+         _Players[v.name] = {}
+         if C['enableDebug'] then
+             DebugLog("Registered job: " ..v.name)
+         end
+     end
+ end)
 
 
 AddEventHandler('esx:setJob', function(source, job, lastJob)
@@ -40,9 +42,9 @@ AddEventHandler('esx:setJob', function(source, job, lastJob)
 end)
 
 AddEventHandler('playerDropped', function(reason)
-	local _src <const> = source
+    local _src <const> = source
     local xPlayer = ESX['GetPlayerFromId'](_src)
-    if xPlayer['job']['name'] then
+    if xPlayer then
         local _job <const> = xPlayer['job']['name']
         if _Players[_job] then
             if _Players[_job][_src] then
@@ -71,5 +73,14 @@ exports("getPlayers", function(job)
         return _Players[job]
     else
         RconPrint("^1PLAYERTABLES ERROR: Provide a valid job in export 'getPlayers'\n")
+    end
+end)
+
+AddEventHandler('onResourceStart', function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        MySQL.query('SELECT name FROM jobs ', {},
+        function(result)
+            Jobs = result
+        end)
     end
 end)
